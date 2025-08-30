@@ -6,9 +6,9 @@ namespace Orders.Backend.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CountriesController : GenericController<Country>
+public class CategoriesController : GenericController<Category>
 {
-    public CountriesController(IGenericUnitOfWork<Country> unitOfWork) : base(unitOfWork)
+    public CategoriesController(IGenericUnitOfWork<Category> unitOfWork) : base(unitOfWork)
     {
     }
 }
