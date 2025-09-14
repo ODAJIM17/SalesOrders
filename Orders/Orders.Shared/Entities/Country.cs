@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Orders.Shared.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace Orders.Shared.Entities;
 
-public class Country
+public class Country : IEntityWithName
 {
     [Key]
     public int Id { get; set; }
@@ -11,4 +12,8 @@ public class Country
     [MaxLength(100, ErrorMessage = "{0} can not exceed {1} characters.")]
     [Required(ErrorMessage = "{0} is required.")]
     public string Name { get; set; } = null!;
+
+    public ICollection<State>? States { get; set; }
+
+    public int Statesnumber => States == null ? 0 : States.Count;
 }

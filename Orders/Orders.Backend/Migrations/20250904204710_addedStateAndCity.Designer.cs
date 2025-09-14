@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Orders.Backend.Data;
 
@@ -10,9 +11,11 @@ using Orders.Backend.Data;
 namespace Orders.Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250904204710_addedStateAndCity")]
+    partial class addedStateAndCity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,10 +63,9 @@ namespace Orders.Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StateId", "Name")
-                        .IsUnique();
+                    b.HasIndex("StateId");
 
-                    b.ToTable("Cities");
+                    b.ToTable("City");
                 });
 
             modelBuilder.Entity("Orders.Shared.Entities.Country", b =>
@@ -116,7 +118,7 @@ namespace Orders.Backend.Migrations
                     b.HasOne("Orders.Shared.Entities.State", "State")
                         .WithMany("Cities")
                         .HasForeignKey("StateId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("State");
@@ -125,17 +127,12 @@ namespace Orders.Backend.Migrations
             modelBuilder.Entity("Orders.Shared.Entities.State", b =>
                 {
                     b.HasOne("Orders.Shared.Entities.Country", "Country")
-                        .WithMany("States")
+                        .WithMany()
                         .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Country");
-                });
-
-            modelBuilder.Entity("Orders.Shared.Entities.Country", b =>
-                {
-                    b.Navigation("States");
                 });
 
             modelBuilder.Entity("Orders.Shared.Entities.State", b =>
