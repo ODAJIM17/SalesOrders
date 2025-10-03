@@ -11,7 +11,8 @@ public class CountriesController : GenericController<Country>
 {
     private readonly ICountriesUnitOfWork _countriesUnitOfWork;
 
-    public CountriesController(IGenericUnitOfWork<Country> unitOfWork, ICountriesUnitOfWork countriesUnitOfWork) : base(unitOfWork)
+    public CountriesController(IGenericUnitOfWork<Country>
+        unitOfWork, ICountriesUnitOfWork countriesUnitOfWork) : base(unitOfWork)
     {
         _countriesUnitOfWork = countriesUnitOfWork;
     }
