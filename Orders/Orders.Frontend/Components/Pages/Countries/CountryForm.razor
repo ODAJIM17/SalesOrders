@@ -1,5 +1,41 @@
-﻿<h3>CountryForm</h3>
+﻿<EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudTextField Label="Country"
+                  @bind-Value="@Country.Name"
+                  For="@(() => Country.Name)"
+                  Class="mb-4" />
+
+    <MudButton Variant="Variant.Outlined"
+                Size="Size.Small"
+               StartIcon="@Icons.Material.Filled.ArrowBack"
+               Color="Color.Info"
+               OnClick="ReturnAction">
+        <MudHidden xs="true">
+            Cancel
+        </MudHidden>
+    </MudButton>
+
+    <MudButton Variant="Variant.Outlined"
+               Size="Size.Small"
+               StartIcon="@Icons.Material.Filled.Check"
+               Color="Color.Primary"
+               ButtonType="ButtonType.Submit">
+        <MudHidden xs="true">
+            Save Changes
+        </MudHidden>
+    </MudButton>
+</EditForm>
 
 @code {
+    private EditContext editContext = null!;
+
+    [EditorRequired, Parameter] public Country Country { get; set; } = null!;
+    [EditorRequired, Parameter] public EventCallback OnValidSubmit { get; set; }
+    [EditorRequired, Parameter] public EventCallback ReturnAction { get; set; }
+
+    protected override void OnInitialized()
+    {
+        editContext = new(Country);
+    }
 
 }
