@@ -1,0 +1,252 @@
+﻿@page "/country"
+@using System.Net
+@inject HttpClient httpClient
+
+@if (loading)
+{
+    <Loading />
+}
+else
+{
+    <div class="mt-4">
+        <MudTable Elevation="2"
+                  @ref="table"
+                  ServerData="LoadListAsync"
+                  Hover="true"
+                  Striped="true"
+                  Dense="true"
+                  FixedHeader="true"
+                  FixedFooter="true">
+
+            <ToolBarContent>
+                <div class="d-flex  justify-content-between">
+                    <MudText Typo="Typo.h6" Class="me-4">Countries</MudText>
+                    <MudButton Variant="Variant.Filled"
+                               EndIcon="@Icons.Material.Filled.Add"
+                               Size="Size.Small"
+                               Color="Color.Primary" OnClick="@(() => ShowModalAsync())">
+                        Add New
+                    </MudButton>
+                </div>
+                <MudSpacer />
+                <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                @*<FilterComponent ApplyFilter="SetFilterValue" />*@
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Country Name</MudTh>
+                <MudTh style="width: 100px;">States</MudTh>
+                <MudTh style="width: 270px;">Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.Name</MudTd>
+                <MudTd>@context.Statesnumber</MudTd>
+                <MudTd>
+                    <MudTooltip Text="Edit">
+                        <MudFab Variant="Variant.Filled"
+                                Color="Color.Warning"
+                                Size="Size.Small"
+                                StartIcon="@Icons.Material.Filled.Edit"
+                                OnClick="@(() => ShowModalAsync(context.Id, true))">
+                        </MudFab>
+                    </MudTooltip>
+                    <MudTooltip Text="Delete">
+                        <MudFab Variant="Variant.Filled"
+                                Color="Color.Error"
+                                Size="Size.Small"
+                                StartIcon="@Icons.Material.Filled.Delete"
+                                OnClick="@(() => DeleteAsync(@context))">
+                        </MudFab>
+                    </MudTooltip>
+                </MudTd>
+            </RowTemplate>
+            <NoRecordsContent>
+                <MudText>"No records to show."</MudText>
+            </NoRecordsContent>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </div>
+}
+
+@code {
+
+    private IEnumerable<Country> pagedData;
+    private Country country = new Country();
+    private List<Country>? countries;
+    private int totalItems;
+
+    private IEnumerable<Country> Countries = new List<Country>();
+
+    private string searchString = "";
+    //private List<Country>? Countries { get; set; }
+    private MudTable<Country> table = new();
+    private readonly int[] pageSizeOptions = { 10, 25, 50, int.MaxValue };
+    private int totalRecords = 0;
+    private bool loading;
+    private const string baseUrl = "api/countries";
+    private string infoFormat = "{first_item}-{last_item} of {all_items}";
+
+    [Inject] private IRepository Repository { get; set; } = null!;
+    [Inject] private IDialogService DialogService { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+
+    [Parameter, SupplyParameterFromQuery] public string Filter { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTotalRecordsAsync();
+    }
+
+    private void OnSearch(string text)
+    {
+        searchString = text;
+        table.ReloadServerData();
+    }
+
+    private async Task LoadTotalRecordsAsync()
+    {
+        loading = true;
+        var url = $"{baseUrl}/totalRecords";
+
+        //if (!string.IsNullOrWhiteSpace(Filter))
+        //{
+        //    url += $"?filter={Filter}";
+        //}
+
+        var responseHttp = await Repository.GetAsync<int>(url);
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(message!, Severity.Error);
+            return;
+        }
+
+        totalRecords = responseHttp.Response;
+        loading = false;
+    }
+
+    private async Task<TableData<Country>> LoadListAsync(TableState state, CancellationToken cancellationToken)
+    {
+
+        int page = state.Page + 1;
+        int pageSize = state.PageSize;
+        var url = $"{baseUrl}/paginated/?page={page}&recordsnumber={pageSize}";
+
+        //if (!string.IsNullOrWhiteSpace(Filter))
+        //{
+        //    url += $"&filter={Filter}";
+        //}
+
+        var responseHttp = await Repository.GetAsync<List<Country>>(url);
+
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(message!, Severity.Error);
+            return new TableData<Country> { Items = [], TotalItems = 0 };
+        }
+        if (responseHttp.Response == null)
+        {
+            return new TableData<Country> { Items = [], TotalItems = 0 };
+        }
+
+        IEnumerable<Country> data = await httpClient.GetFromJsonAsync<List<Country>>(baseUrl, cancellationToken);
+
+        data = data!.Where(x =>
+        {
+            if (string.IsNullOrWhiteSpace(searchString))
+                return true;
+            if (x.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            return false;
+        }).ToArray();
+
+        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        totalRecords = data.Count();
+
+        return new TableData<Country>
+        { 
+            TotalItems = totalRecords, 
+            Items = pagedData 
+        };
+
+        //{
+
+        //    Items = data,
+        //    TotalItems = totalRecords
+        //};
+    }
+
+    //private async Task SetFilterValue(string value)
+    //{
+
+    //    Filter = value;
+    //    await LoadTotalRecordsAsync();
+    //    await table.ReloadServerData();
+
+    //}
+
+    private async Task ShowModalAsync(int id = 0, bool isEdit = false)
+    {
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            CloseButton = true
+        };
+        IDialogReference? dialog;
+        if (isEdit)
+        {
+            var parameters = new DialogParameters
+{
+                { "Id", id }
+            }; dialog = await DialogService.ShowAsync<CountryEdit>("Edit Country", parameters, options);
+        }
+        else
+        {
+            dialog = await DialogService.ShowAsync<CountryCreate>("New Country", options);
+        }
+
+        var result = await dialog.Result;
+        if (result!.Canceled!)
+        {
+            await LoadTotalRecordsAsync();
+            await table.ReloadServerData();
+        }
+    }
+
+    private async Task DeleteAsync(Country country)
+    {
+        var parameters = new DialogParameters
+{
+            { "Message", $"Are you sure you want to delete : {country.Name}" }
+        };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, CloseOnEscapeKey = true };
+        var dialog = await DialogService.ShowAsync<ConfirmDialog>("Confirmación", parameters, options);
+        var result = await dialog.Result;
+        if (result!.Canceled)
+        {
+            return;
+        }
+
+        var responseHttp = await Repository.DeleteAsync($"{baseUrl}/{country.Id}");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                NavigationManager.NavigateTo("/countries");
+            }
+            else
+            {
+                var message = await responseHttp.GetErrorMessageAsync();
+                Snackbar.Add(message!, Severity.Error);
+            }
+            return;
+        }
+        await LoadTotalRecordsAsync();
+        await table.ReloadServerData();
+        Snackbar.Add("Record deleted.", Severity.Success);
+    }
+}

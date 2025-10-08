@@ -6,64 +6,64 @@
 }
 else
 {
-    <MudTable Items="@Countries"
-              @ref="table"
-              ServerData="LoadListAsync"
-              Dense="true"
-              Hover="true"
-              Striped="true"
-              FixedHeader="true"
-              FixedFooter="true">
-        <ToolBarContent>
-            <div class="d-flex justify-content-between">
-                <MudText Typo="Typo.h6" Class="me-4">Countries</MudText>
-                <MudButton Variant="Variant.Filled"
-                           EndIcon="@Icons.Material.Filled.Add"
-                           Size="Size.Small"
-                           Color="Color.Tertiary" OnClick="@(() => ShowModalAsync())">
-                    Add New
-                </MudButton>
-            </div>
-            <MudSpacer />
-            <FilterComponent ApplyFilter="SetFilterValue" />
-        </ToolBarContent>
-        <HeaderContent>
-            <MudTh>País</MudTh>
-            <MudTh style="width: 100px;">States</MudTh>
-            <MudTh style="width: 270px;">Actions</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd>@context.Name</MudTd>
-            <MudTd>@context.Statesnumber</MudTd>
-            <MudTd>
-                <MudTooltip Text="Edit">
-                    <MudFab Variant="Variant.Filled"
-                               Color="Color.Warning"
-                            Size="Size.Small"
-                            StartIcon="@Icons.Material.Filled.Edit"
-                               OnClick="@(() => ShowModalAsync(context.Id, true))">
-                       
-                    </MudFab>
-                </MudTooltip>
-                <MudTooltip Text="Delete">
-                    <MudFab Variant="Variant.Filled"
-                               Color="Color.Error"
-                            Size="Size.Small"
-                             StartIcon="@Icons.Material.Filled.Delete"
-                               OnClick="@(() => DeleteAsync(@context))">                       
-                    </MudFab>
-                </MudTooltip>
-            </MudTd>
-        </RowTemplate>
-        <NoRecordsContent>
-            <MudText>"No records to show."</MudText>
-        </NoRecordsContent>
-        <PagerContent>
-            <MudTablePager RowsPerPageString="Rows per page"
-                           PageSizeOptions="pageSizeOptions"
-                           AllItemsText="Todo"
-                           InfoFormat="@infoFormat" />
-        </PagerContent>
-    </MudTable>
-
+    <div class="mt-4">
+        <MudTable Items="@Countries"
+                  @ref="table"
+                  ServerData="LoadListAsync"
+                  Dense="true"
+                  Hover="true"
+                  Striped="true"
+                  FixedHeader="true"
+                  FixedFooter="true">
+            <ToolBarContent>
+                <div class="d-flex  justify-content-between">
+                    <MudText Typo="Typo.h6" Class="me-4">Countries</MudText>
+                    <MudButton Variant="Variant.Filled"
+                               EndIcon="@Icons.Material.Filled.Add"
+                               Size="Size.Small"
+                               Color="Color.Primary" OnClick="@(() => ShowModalAsync())">
+                        Add New
+                    </MudButton>
+                </div>
+                <MudSpacer />
+                <FilterComponent ApplyFilter="SetFilterValue" />
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Country Name</MudTh>
+                <MudTh style="width: 100px;">States</MudTh>
+                <MudTh style="width: 270px;">Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.Name</MudTd>
+                <MudTd>@context.Statesnumber</MudTd>
+                <MudTd>
+                    <MudTooltip Text="Edit">
+                        <MudFab Variant="Variant.Filled"
+                                Color="Color.Warning"
+                                Size="Size.Small"
+                                StartIcon="@Icons.Material.Filled.Edit"
+                                OnClick="@(() => ShowModalAsync(context.Id, true))">
+                        </MudFab>
+                    </MudTooltip>
+                    <MudTooltip Text="Delete">
+                        <MudFab Variant="Variant.Filled"
+                                Color="Color.Error"
+                                Size="Size.Small"
+                                StartIcon="@Icons.Material.Filled.Delete"
+                                OnClick="@(() => DeleteAsync(@context))">
+                        </MudFab>
+                    </MudTooltip>
+                </MudTd>
+            </RowTemplate>
+            <NoRecordsContent>
+                <MudText>"No records to show."</MudText>
+            </NoRecordsContent>
+            <PagerContent>
+                <MudTablePager RowsPerPageString="Rows per page"
+                               PageSizeOptions="pageSizeOptions"
+                               AllItemsText="All"
+                               InfoFormat="@infoFormat" />
+            </PagerContent>
+        </MudTable>
+    </div>
 }
