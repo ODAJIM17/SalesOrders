@@ -1,0 +1,36 @@
+﻿﻿<MudDialog>
+    <DialogContent>
+        <FormWithName Label="Categoría:" Model="category" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+    </DialogContent>
+</MudDialog>
+
+@code {
+
+  private Category category = new();
+
+    [Inject] private IRepository Repository { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+
+private async Task CreateAsync()
+    {
+        var responseHttp = await Repository.PostAsync("/api/categories", category);
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(message!, Severity.Error);
+            return;
+        }
+
+        Return();
+        Snackbar.Add("Recorder created successfulyy", Severity.Success);
+    }
+
+    private void Return()
+    {
+        NavigationManager.NavigateTo("/categories");
+    }
+
+}
+
+}

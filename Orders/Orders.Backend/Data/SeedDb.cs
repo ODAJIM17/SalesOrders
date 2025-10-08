@@ -26,6 +26,10 @@ public class SeedDb
         {
             _context.Categories.Add(new Category { Name = "Shoes" });
             _context.Categories.Add(new Category { Name = "Technology" });
+            _context.Categories.Add(new Category { Name = "Hardware" });
+            _context.Categories.Add(new Category { Name = "Home" });
+            _context.Categories.Add(new Category { Name = "Garden" });
+            _context.Categories.Add(new Category { Name = "Apple" });
             await _context.SaveChangesAsync();
         }
     }
