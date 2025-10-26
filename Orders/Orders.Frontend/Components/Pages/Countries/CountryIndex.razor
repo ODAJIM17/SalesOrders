@@ -35,7 +35,14 @@ else
             </HeaderContent>
             <RowTemplate>
                 <MudTd>@context.Name</MudTd>
-                <MudTd>@context.Statesnumber</MudTd>
+                <MudTd DataLabel="Estados">
+                    <MudTooltip Text="States">
+                        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Map" Color="Color.Info" OnClick="@(() => StatesAction(@context))" style="width: 100px;">
+                            @context.Statesnumber
+                        </MudButton>
+                    </MudTooltip>
+                </MudTd>
+
                 <MudTd>
                     <MudTooltip Text="Edit">
                         <MudFab Variant="Variant.Filled"

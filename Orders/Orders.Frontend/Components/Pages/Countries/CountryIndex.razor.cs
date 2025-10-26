@@ -29,6 +29,11 @@ public partial class CountryIndex
         await LoadTotalRecordsAsync();
     }
 
+    private void StatesAction(Country country)
+    {
+        NavigationManager.NavigateTo($"/countries/details/{country.Id}");
+    }
+
     private async Task LoadTotalRecordsAsync()
     {
         loading = true;
@@ -82,11 +87,9 @@ public partial class CountryIndex
 
     private async Task SetFilterValue(string value)
     {
-       
         Filter = value;
         await LoadTotalRecordsAsync();
-        await table.ReloadServerData(); 
-        
+        await table.ReloadServerData();
     }
 
     private async Task ShowModalAsync(int id = 0, bool isEdit = false)
