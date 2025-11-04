@@ -1,10 +1,5 @@
 ﻿using Orders.Shared.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Orders.Shared.Entities
 {
@@ -13,12 +8,14 @@ namespace Orders.Shared.Entities
         public int Id { get; set; }
 
         [Display(Name = "City")]
-        [MaxLength(100, ErrorMessage = "El campo {0} no puede tener más de {1} carácteres.")]
-        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        [MaxLength(100, ErrorMessage = "{0} can not exceed {1} characters.")]
+        [Required(ErrorMessage = "{0} is required.")]
         public string Name { get; set; } = null!;
 
         public int StateId { get; set; }
 
         public State? State { get; set; }
+
+        public ICollection<User>? Users { get; set; }
     }
 }
