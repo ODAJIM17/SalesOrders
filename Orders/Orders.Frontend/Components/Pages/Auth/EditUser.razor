@@ -7,27 +7,29 @@
 else
 {
     <MudItem>
-        <MudText Typo="Typo.h5">Editar Usuario</MudText>
+        <MudText Typo="Typo.h5">Edit User</MudText>
     </MudItem>
+
     <EditForm Model="user" OnValidSubmit="SaveUserAsync">
         <DataAnnotationsValidator />
         <MudGrid>
             <MudItem xs="12" sm="6">
                 <MudCardContent>
-                    <MudTextField Label="Nombre"
+                    <MudTextField Label="Name"
                                   @bind-Value="user!.FirstName"
                                   For="@(() => user!.FirstName)" />
-                    <MudTextField Label="Apellido"
+
+                    <MudTextField Label="Last Name"
                                   @bind-Value="user.LastName"
                                   For="@(() => user.LastName)" />
-                    <MudTextField Label="Documento"
+                    <MudTextField Label="Document Nbr"
                                   @bind-Value="user.Document"
                                   For="@(() => user.Document)" />
-                    <MudTextField Label="Telefono"
+                    <MudTextField Label="Cell"
                                   @bind-Value="user.PhoneNumber"
                                   For="@(() => user.PhoneNumber)"
                                   InputType="InputType.Telephone" />
-                    <MudTextField Label="Dirección"
+                    <MudTextField Label="Address"
                                   @bind-Value="user.Address"
                                   For="@(() => user.Address)" />
                 </MudCardContent>
@@ -35,8 +37,8 @@ else
             <MudItem xs="12" sm="6">
                 <MudCardContent>
                     <MudAutocomplete T="Country"
-                                     Label="País"
-                                     Placeholder="--Seleccione un País--"
+                                     Label="Country"
+                                     Placeholder="--Select country--"
                                      SearchFunc="SearchCountries"
                                      Value="selectedCountry"
                                      ValueChanged="CountryChangedAsync"
@@ -46,8 +48,8 @@ else
                         </ItemTemplate>
                     </MudAutocomplete>
                     <MudAutocomplete T="State"
-                                     Label="Estado"
-                                     Placeholder="--Seleccione un Estado--"
+                                     Label="State"
+                                     Placeholder="--Select state--"
                                      SearchFunc="SearchStates"
                                      Value="selectedState"
                                      ValueChanged="StateChangedAsync"
@@ -58,7 +60,7 @@ else
                     </MudAutocomplete>
                     <MudAutocomplete T="City"
                                      Label="Ciudad"
-                                     Placeholder="--Seleccione una Ciudad--"
+                                     Placeholder="--Select city--"
                                      SearchFunc="SearchCity"
                                      Value="selectedCity"
                                      ValueChanged="CityChanged"
@@ -69,28 +71,30 @@ else
                     </MudAutocomplete>
                 </MudCardContent>
                 <MudItem xs="12" sm="6">
-                    <InputImg Label="Foto" ImageSelected="ImageSelected" ImageURL="@imageUrl" />
+                    <InputImg Label="Photo" ImageSelected="ImageSelected" ImageURL="@imageUrl" />
                 </MudItem>
             </MudItem>
             <MudGrid Justify="Justify.Center" Class="mt-4">
                 <MudItem>
-                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Check" Color="Color.Primary" OnClick="SaveUserAsync">
-                        Guardar Cambios
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="SaveUserAsync">
+                        Save Changes
                     </MudButton>
                 </MudItem>
                 <MudItem>
                     <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.LockReset" Color="Color.Secondary" OnClick="ShowModal">
-                        Cambiar Contraseña
+                        Change Password
                     </MudButton>
                 </MudItem>
                 <MudItem>
-                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.ArrowBack" Color="Color.Info" OnClick="ReturnAction">
-                        Cancelar
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Cancel" Color="Color.Info" OnClick="ReturnAction">
+                        Cancel
                     </MudButton>
                 </MudItem>
             </MudGrid>
         </MudGrid>
     </EditForm>
+
+   
 }
 
 @code {

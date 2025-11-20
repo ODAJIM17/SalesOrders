@@ -10,22 +10,22 @@ namespace Orders.Shared.DTOs
     public class ChangePasswordDTO
     {
         [DataType(DataType.Password)]
-        [Display(Name = "Contraseña actual")]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "El campo {0} debe tener entre {2} y {1} carácteres.")]
-        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        [Display(Name = "Current password")]
+        [StringLength(20, MinimumLength = 6, ErrorMessage = "{0} requires {2} and {1} characters.")]
+        [Required(ErrorMessage = "{0} is required.")]
         public string CurrentPassword { get; set; } = null!;
 
         [DataType(DataType.Password)]
-        [Display(Name = "Nueva contraseña")]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "El campo {0} debe tener entre {2} y {1} carácteres.")]
-        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        [Display(Name = "New password")]
+        [StringLength(20, MinimumLength = 6, ErrorMessage = "{0} requires {2} and {1} characters.")]
+        [Required(ErrorMessage = "{0} is required.")]
         public string NewPassword { get; set; } = null!;
 
-        [Compare("NewPassword", ErrorMessage = "La nueva contraseña y la confirmación no son iguales.")]
+        [Compare("NewPassword", ErrorMessage = "Password and confirm password do not match.")]
         [DataType(DataType.Password)]
-        [Display(Name = "Confirmación nueva contraseña")]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "El campo {0} debe tener entre {2} y {1} carácteres.")]
-        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        [Display(Name = "Confirm new password")]
+        [StringLength(20, MinimumLength = 6, ErrorMessage = "{0} requires {2} and {1} characters.")]
+        [Required(ErrorMessage = "{0} is required.")]
         public string Confirm { get; set; } = null!;
     }
 }
