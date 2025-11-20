@@ -1,11 +1,94 @@
 ﻿@page "/login"
-@layout NoLayout
-<h3>Login</h3>
-<h3>This page has no layout!</h3>
-<p>This content is rendered directly without any surrounding layout elements.</p>
-<div class="container">
-    <p>test</p>
-</div>
+
+<MudDialog>
+    <DialogContent>
+        <EditForm Model="loginDTO" OnValidSubmit="LoginAsync">
+            <DataAnnotationsValidator />
+            <MudGrid Class="mb-4">
+                <MudItem xs="12" sm="12">
+                    <MudTextField Label="Email" @bind-Value="@loginDTO.Email" InputType="InputType.Email" />
+                    <ValidationMessage For="@(() => loginDTO.Email)" />
+                </MudItem>
+                <MudItem xs="12" sm="12">
+                    <MudTextField Label="Contraseña" @bind-Value="@loginDTO.Password" InputType="InputType.Password" />
+                    <ValidationMessage For="@(() => loginDTO.Password)" />
+                </MudItem>
+            </MudGrid>
+            <MudGrid Class="mb-4">
+                <MudItem xs="12" sm="6" Class="d-flex justify-content-center">
+                    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Login" Color="Color.Primary" ButtonType="ButtonType.Submit" FullWidth="true">
+                        Iniciar Sesión
+                    </MudButton>
+                </MudItem>
+                <MudItem xs="12" sm="6" Class="d-flex justify-content-center">
+                    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Cancel" Color="Color.Error" OnClick="CloseModal" FullWidth="true">
+                        Cancelar
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <MudItem xs="12" sm="12">
+            <MudLink Href="/Register" Underline="Underline.Always">¿No eres usuario aún? Resgitrate aquí</MudLink>
+        </MudItem>
+        <MudItem xs="12" sm="12">
+            <MudLink OnClick="ShowModalRecoverPassword" Underline="Underline.Always">¿Has olvidado tu contraseña?</MudLink>
+        </MudItem>
+        <MudItem xs="12" sm="12">
+            <MudLink OnClick="ShowModalResendConfirmationEmail" Underline="Underline.Always">Reenviar correro de activación de cuenta</MudLink>
+        </MudItem>
+    </DialogActions>
+</MudDialog>
+
 @code {
 
+    private LoginDTO loginDTO = new();
+    private bool wasClose;
+
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IDialogService DialogService { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [Inject] private IRepository Repository { get; set; } = null!;
+    [Inject] private ILoginService LoginService { get; set; } = null!;
+
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private void ShowModalResendConfirmationEmail()
+    {
+        var closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true, CloseButton = true, MaxWidth = MaxWidth.ExtraLarge };
+        DialogService.Show<ResendConfirmationEmailToken>("Reenvio de correo", closeOnEscapeKey);
+    }
+
+    private void ShowModalRecoverPassword()
+    {
+        var closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true, CloseButton = true, MaxWidth = MaxWidth.ExtraLarge };
+        DialogService.Show<RecoverPassword>("Rec. contraseña", closeOnEscapeKey);
+    }
+
+    private void CloseModal()
+    {
+        wasClose = true;
+        MudDialog.Cancel();
+    }
+
+    private async Task LoginAsync()
+    {
+        if (wasClose)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        var responseHttp = await Repository.PostAsync<LoginDTO, TokenDTO>("/api/accounts/Login", loginDTO);
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(message!, Severity.Error);
+            return;
+        }
+
+        await LoginService.LoginAsync(responseHttp.Response!.Token);
+        NavigationManager.NavigateTo("/");
+    }
 }
